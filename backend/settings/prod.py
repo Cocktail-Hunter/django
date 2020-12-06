@@ -40,10 +40,7 @@ DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
-# The extra 'cocktail-hunter' is added to the URL path because this all
-# goes under a single account where images of different projects are mixed
-# so this is a way to separate them for organisation purposes
-MEDIA_URL = '/cocktail-hunter/media/'
-MEDIA_ROOT = BASE_DIR / 'cocktail-hunter' / 'media'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # CORS_ORIGIN_ALLOW_ALL = False
