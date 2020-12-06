@@ -22,8 +22,6 @@ Your system should have Python 3.8.x installed before you continue with the loca
 
 ## Installation
 
-Ignore step 5 for now even if Django tells you to do so as there is currently no database set-up.
-
 1. Install pipenv: `pip install pipenv`.
 2. Install python dependencies by running `pipenv install`, which also creates a virtual env.
 3. Create the `.env` file and fill it in using the variables listed below.
