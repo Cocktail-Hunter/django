@@ -1,18 +1,7 @@
 # Cocktail Hunter
 
 Find cocktails you can make based on your inventory.
-
-### Context
-
-People sometimes don't have a wide variety of alcohol in their homes and might not want to go all the way to the store for that one mysterious ingredient.
-
-### This is where this app comes in...
-
-Users will be able to input a list of all the alcohol and ingredients they've got and the app will return all possible cocktails the user can make. By default, it will result with cocktails strictly with the ingredients the user has but it can be toggled off where the app can result with cocktails with 1-2 missing ingredients.
-
-# Long term plans
-
-Users are able to publish their own cocktail recipes that they've discovered or want to share with the community.
+This is the backend for the web application handling data, etc.
 
 # Local setup
 
@@ -31,11 +20,20 @@ Your system should have Python 3.8.x installed before you continue with the loca
 ### Environment Variables
 
 Keep the the `SETTING` variable as it is.
+Generate a 50 characters long hexademical string to use a secret key.
 
 ```
 SECRET_KEY=
 SETTING=backend.settings.dev
 ```
+
+## Creating an Admin user
+
+This should be done after running `pipenv shell`.
+This will allow you to access the admin page at `https://localhost:8000/admin` to view and edit data.
+
+1. Run `python manage.py createsuperuser`
+2. Fill in the info it asks you to (e.g. username, email)
 
 ## Running Development server
 
