@@ -26,7 +26,7 @@ class UserAuthTest(APITestCase):
             'passwordConfirm': self.password
         }
 
-    def create_user(self, active=False):
+    def create_user(self):
         '''
         Helper function used to create a user directly in the database
         '''
@@ -34,7 +34,6 @@ class UserAuthTest(APITestCase):
             username=self.username,
             email=self.email
         )
-        user.is_active = active
         user.set_password(self.password)
         user.save()
         return user
@@ -48,7 +47,8 @@ class UserAuthTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(User.objects.count(), 1)
         self.assertEqual(User.objects.get().username, 'testuser')
-        self.assertFalse(User.objects.get().is_active)
+        self.assertTrue(User.objects.get().is_active)
+        self.assertFalse(User.objects.get().is_verified)
         self.assertFalse(User.objects.get().is_admin)
 
     def test_login(self):
@@ -58,18 +58,10 @@ class UserAuthTest(APITestCase):
         url = reverse('v1:token_pair')
         user = self.create_user()
 
-        # Test when account is inactive
-        response = self.client.post(url, self.login_data)
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-
-        # Set user to active
-        user.is_active = True
-        user.save()
-
-        # Test when account is active which should return access and refresh tokens
         response = self.client.post(url, self.login_data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+        # Should return access and refresh tokens
         data = response.json()
         self.assertIn('access', data.keys())
         self.assertIn('refresh', data.keys())
@@ -81,7 +73,7 @@ class UserAuthTest(APITestCase):
         '''
         login_url = reverse('v1:token_pair')
         refresh_url = reverse('v1:token_refresh')
-        user = self.create_user(active=True)
+        user = self.create_user()
 
         login_response = self.client.post(login_url, self.login_data)
         initial_access_token = login_response.json().get('access')
@@ -90,8 +82,10 @@ class UserAuthTest(APITestCase):
         refresh_response = self.client.post(
             refresh_url, {'refresh': refresh_token}
         )
-        self.assertEqual(refresh_response.status_code, status.HTTP_200_OK)
-        self.assertIn('access', refresh_response.json().keys())
+        refresh_data = refresh_response.json()
 
-        new_access_token = refresh_response.json().get('access')
+        self.assertEqual(refresh_response.status_code, status.HTTP_200_OK)
+        self.assertIn('access', refresh_data.keys())
+
+        new_access_token = refresh_data.get('access')
         self.assertNotEqual(new_access_token, initial_access_token)
