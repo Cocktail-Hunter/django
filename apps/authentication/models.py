@@ -34,7 +34,7 @@ class UserManager(BaseUserManager):
         '''
         user = self.create_user(username, email, password, **extra_fields)
         user.is_admin = True
-        user.is_active = True
+        user.is_verified = True
         user.save(using=self._db)
         return user
 
@@ -69,7 +69,8 @@ class User(AbstractBaseUser):
     )
     avatar = models.ImageField(upload_to='users/avatars', blank=True)
     is_admin = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+    is_verified = models.BooleanField(default=False)
 
     objects = UserManager()
 
