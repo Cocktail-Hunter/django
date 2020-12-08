@@ -8,20 +8,13 @@ class RegistrationSerializer(serializers.ModelSerializer):
     '''
     Serialize data between JSON and Python readable dictionary format
     '''
-    password_confirm = serializers.CharField(
-        required=True,
-        write_only=True,
-        label='Password Confirmation',
-        style={'input_type': 'password'}
-    )
-
     class Meta:
         '''
         Meta data for the serializer
         e.g. what model/table is this serializer for?
         '''
         model = User
-        fields = ('username', 'email', 'password', 'password_confirm')
+        fields = ('username', 'email', 'password')
         extra_kwargs = {
             'password': {'write_only': True}
         }
@@ -35,15 +28,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
             email=self.validated_data.get('email')
         )
         password = self.validated_data.get('password')
-        password_confirm = self.validated_data.get('password_confirm')
-
-        if password != password_confirm:
-            raise serializers.ValidationError(
-                detail='Passwords do not match',
-                code=status.HTTP_400_BAD_REQUEST
-            )
 
         user.set_password(password)
         user.save()
-
         return user
