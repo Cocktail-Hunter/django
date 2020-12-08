@@ -22,8 +22,7 @@ class UserAuthTest(APITestCase):
 
         self.register_data = {
             **self.login_data,
-            'email': self.email,
-            'passwordConfirm': self.password
+            'email': self.email
         }
 
     def create_user(self):
