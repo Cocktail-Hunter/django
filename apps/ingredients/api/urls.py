@@ -1,7 +1,7 @@
 from django.urls import path
-from .views import AddIngredientAPIView
+from .views import IngredientAPIView
 
 
 urlpatterns = [
-    path('add/', AddIngredientAPIView.as_view(), name='token_pair'),
+    path('', IngredientAPIView.as_view(), name='ingredients-list-add'),
 ]
