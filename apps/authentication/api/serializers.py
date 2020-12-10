@@ -25,8 +25,8 @@ class RegistrationSerializer(serializers.ModelSerializer):
     def get_tokens(self, user):
         token_pairs = RefreshToken.for_user(user)
         tokens = {
-            "refresh": str(token_pairs),
-            "access": str(token_pairs.access_token)
+            'refresh': str(token_pairs),
+            'access': str(token_pairs.access_token)
         }
         return tokens
 
