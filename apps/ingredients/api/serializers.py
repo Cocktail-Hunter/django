@@ -13,9 +13,9 @@ class AddIngredientSerializer(serializers.ModelSerializer):
         e.g. what model/table is this serializer for?
         '''
         model = Ingredient
-        fields = ('name', 'is_public')
+        fields = ('name', 'public')
         extra_kwargs = {
-            'is_public': {'required': True}
+            'public': {'required': True}
         }
 
     def create(self, validated_data):

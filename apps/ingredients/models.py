@@ -15,7 +15,7 @@ class Ingredient(models.Model):
     state = models.PositiveSmallIntegerField(
         default=IngredientState.PENDING, choices=IngredientState.choices
     )
-    is_public = models.BooleanField(default=True)
+    public = models.BooleanField(default=True)
     added_by = models.ForeignKey(
         User, null=True, blank=True, on_delete=models.CASCADE
     )
