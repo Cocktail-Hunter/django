@@ -26,7 +26,7 @@ class AddIngredientSerializer(serializers.ModelSerializer):
         validated_data['added_by'] = self.context.get('request').user
 
         # Set the ingredient to the appropriate state
-        if not validated_data.get('is_public'):
+        if not validated_data.get('public'):
             validated_data['state'] = IngredientState.APPROVED
 
         return super().create(validated_data)
