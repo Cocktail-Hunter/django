@@ -1,15 +1,15 @@
-from rest_framework.generics import CreateAPIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.generics import ListCreateAPIView
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 from ..models import Ingredient
-from .serializers import AddIngredientSerializer
+from .serializers import IngredientSerializer
 
 
-class AddIngredientAPIView(CreateAPIView):
-    permission_classes = (IsAuthenticated,)
+class IngredientAPIView(ListCreateAPIView):
+    permission_classes = (IsAuthenticatedOrReadOnly,)
     queryset = Ingredient.objects.all()
 
     def get_serializer_class(self):
         if self.request.version == 'v1':
-            return AddIngredientSerializer
-        return AddIngredientSerializer
+            return IngredientSerializer
+        return IngredientSerializer
