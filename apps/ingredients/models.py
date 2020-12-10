@@ -11,7 +11,7 @@ class IngredientState(models.IntegerChoices):
 class Ingredient(models.Model):
 
     cocktaildb_id = models.CharField(max_length=255, null=True, blank=True)
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
     state = models.PositiveSmallIntegerField(
         default=IngredientState.PENDING, choices=IngredientState.choices
     )
