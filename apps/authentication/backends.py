@@ -24,7 +24,6 @@ class EmailOrUsernameBackend(ModelBackend):
                 Q(**{case_insensitive_username_field: username}) |
                 Q(email__iexact=username)
             )
+            return user if user.check_password(password) else None
         except user_model.DoesNotExist:
             return None
-        else:
-            return user
