@@ -31,7 +31,7 @@ class IngredientAPIView(ListCreateAPIView):
                     (~Q(state=IngredientState.APPROVED) | Q(state=False))
                 )
 
-        state = self.request.query_params.get('type')
+        state = self.request.query_params.get('state')
         public = self.request.query_params.get('public')
 
         if state is not None:
