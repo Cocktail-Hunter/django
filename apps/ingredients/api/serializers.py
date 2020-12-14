@@ -8,7 +8,7 @@ class IngredientSerializer(serializers.ModelSerializer):
     Serialize data between JSON and Python readable dictionary format
     '''
     state = serializers.SerializerMethodField('get_state')
-    added_by = serializers.SerializerMethodField('get_author_name')
+    added_by = serializers.SerializerMethodField('get_author')
 
     class Meta:
         '''
@@ -38,5 +38,8 @@ class IngredientSerializer(serializers.ModelSerializer):
     def get_state(self, ingredient):
         return ingredient.get_state_display()
 
-    def get_author_name(self, ingredient):
-        return ingredient.added_by.username
+    def get_author(self, ingredient):
+        return {
+            'id': ingredient.added_by.id,
+            'username': ingredient.added_by.username
+        }
