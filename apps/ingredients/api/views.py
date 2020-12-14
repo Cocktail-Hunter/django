@@ -8,6 +8,34 @@ from .serializers import IngredientSerializer
 
 
 class IngredientAPIView(ListCreateAPIView):
+    '''
+    ## GET Request
+
+    GET requests will return a list of all available ingredients that are public.
+    If user is authenticated, the user will be able to view all their own private
+    ingredients as well.
+
+    If user is admin, the user will be able to view everyone's ingredients, including
+    private ones.
+
+    This endpoint takes 2 optional parameters to filter the data returned:
+
+    - state (PENDING, 0) | (APPROVED, 1) | (DENIED, 2)
+    - public Boolean
+
+    ## POST Request
+
+    POST requests will add a new ingredient to the database and only if the user
+    is authenticated. Otherwise, the user will receive 401 Unauthorized.
+
+    The request body should contain 2 key values:
+
+    - name : String
+    - public : Boolean
+
+    All public ingredients are automatically given the state (PENDING, 0) and
+    all private ingredients are automatically given the state (APPROVED, 1)
+    '''
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
     def get_serializer_class(self):
