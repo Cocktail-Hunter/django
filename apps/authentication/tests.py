@@ -16,13 +16,13 @@ class UserAuthTest(APITestCase):
         self.password = 'pass'
 
         self.login_data = {
-            'password': self.password,
-            'username': self.username,
+            'email': self.email,
+            'password': self.password
         }
 
         self.register_data = {
             **self.login_data,
-            'email': self.email
+            'username': self.username
         }
 
     def create_user(self):
@@ -41,7 +41,7 @@ class UserAuthTest(APITestCase):
         '''
         Test if the registration endpoint is working
         '''
-        url = reverse('v1:register')
+        url = reverse('v1:auth:register')
         response = self.client.post(url, self.register_data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(User.objects.count(), 1)
@@ -54,7 +54,7 @@ class UserAuthTest(APITestCase):
         '''
         Test if the login endpoint is working
         '''
-        url = reverse('v1:token_pair')
+        url = reverse('v1:auth:token_pair')
         user = self.create_user()
 
         response = self.client.post(url, self.login_data)
@@ -70,8 +70,8 @@ class UserAuthTest(APITestCase):
         Test if refresh token endpoint is working
         This endpoint is used to generate a new access token
         '''
-        login_url = reverse('v1:token_pair')
-        refresh_url = reverse('v1:token_refresh')
+        login_url = reverse('v1:auth:token_pair')
+        refresh_url = reverse('v1:auth:token_refresh')
         user = self.create_user()
 
         login_response = self.client.post(login_url, self.login_data)
