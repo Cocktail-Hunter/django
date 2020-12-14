@@ -16,8 +16,8 @@ class IngredientSerializer(serializers.ModelSerializer):
         e.g. what model/table is this serializer for?
         '''
         model = Ingredient
-        fields = '__all__'
-        read_only_fields = ('cocktaildb_id', 'state', 'added_by')
+        exclude = ('cocktaildb_id',)
+        read_only_fields = ('state', 'added_by')
         extra_kwargs = {
             'public': {'required': True}
         }
