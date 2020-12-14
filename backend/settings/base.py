@@ -131,10 +131,6 @@ STATIC_ROOT = BASE_DIR / 'static'
 
 AUTH_USER_MODEL = 'authentication.User'
 
-AUTHENTICATION_BACKENDS = [
-    'apps.authentication.backends.EmailBackend'
-]
-
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
