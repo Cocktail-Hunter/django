@@ -74,6 +74,7 @@ class User(AbstractBaseUser):
 
     inventory = models.ManyToManyField(
         'ingredients.Ingredient',
+        blank=True,
         related_name='users',
         related_query_name='user'
     )
