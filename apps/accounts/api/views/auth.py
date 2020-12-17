@@ -1,8 +1,7 @@
-from django.http import HttpResponse
 from rest_framework.generics import CreateAPIView
 
-from ..models import User
-from .serializers import RegistrationSerializer
+from ...models import User
+from ..serializers.auth import RegistrationSerializer
 
 
 class RegistrationAPIView(CreateAPIView):
