@@ -1,5 +1,5 @@
 from django.db import models
-from apps.authentication.models import User
+from django.contrib.auth import get_user_model
 
 
 class IngredientState(models.IntegerChoices):
@@ -17,7 +17,7 @@ class Ingredient(models.Model):
     )
     public = models.BooleanField(default=True)
     added_by = models.ForeignKey(
-        User, null=True, blank=True, on_delete=models.CASCADE
+        get_user_model(), null=True, blank=True, on_delete=models.CASCADE
     )
 
     def __str__(self):

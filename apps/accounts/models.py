@@ -72,6 +72,12 @@ class User(AbstractBaseUser):
     is_active = models.BooleanField(default=True)
     is_verified = models.BooleanField(default=False)
 
+    inventory = models.ManyToManyField(
+        'ingredients.Ingredient',
+        related_name='users',
+        related_query_name='user'
+    )
+
     objects = UserManager()
 
     USERNAME_FIELD = 'email'

@@ -22,11 +22,11 @@ class UserAdmin(BaseUserAdmin):
         (None, {'fields': (
             'email', 'password', 'is_admin', 'is_active', 'is_verified'
         )}),
-        ('Profile', {'fields': ('username', 'avatar')})
+        ('Profile', {'fields': ('username', 'avatar', 'inventory')})
     )
     add_fieldsets = (
         (None, {'fields': ('email', 'is_admin', 'password1', 'password2')}),
-        ('Profile', {'fields': ('username', 'avatar')})
+        ('Profile', {'fields': ('username', 'avatar', 'inventory')})
     )
 
     search_fields = ('email', 'username')

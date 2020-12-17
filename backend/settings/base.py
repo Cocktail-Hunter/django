@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     # 'corsheaders',
     'rest_framework',
     'apps.core',
-    'apps.authentication',
+    'apps.accounts',
     'apps.ingredients'
 ]
 
@@ -129,7 +129,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'static'
 
 
-AUTH_USER_MODEL = 'authentication.User'
+AUTH_USER_MODEL = 'accounts.User'
 
 
 REST_FRAMEWORK = {
