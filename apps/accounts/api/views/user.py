@@ -9,6 +9,7 @@ from ..serializers.user import InventorySerializer
 class InventoryAPIView(RetrieveUpdateAPIView):
     permission_classes = (IsAuthenticated,)
     queryset = User.objects.all()
+    http_method_names = ('get', 'put', 'options')
 
     def get_serializer_class(self):
         if self.request.version == 'v1':
