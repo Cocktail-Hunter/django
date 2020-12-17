@@ -1,7 +1,7 @@
 import json
 from django.db.models import Q
-from rest_framework.generics import ListCreateAPIView
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.generics import ListCreateAPIView, UpdateAPIView
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 
 from ..models import Ingredient, IngredientState
 from .serializers import IngredientSerializer
@@ -79,3 +79,13 @@ class IngredientAPIView(ListCreateAPIView):
             )
 
         return queryset
+
+
+class IngredientUpdateAPIView(UpdateAPIView):
+    permission_classes = (IsAuthenticated,)
+    queryset = Ingredient.objects.all()
+
+    def get_serializer_class(self):
+        if self.request.version == 'v1':
+            return IngredientSerializer
+        return IngredientSerializers
