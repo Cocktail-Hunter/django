@@ -31,7 +31,7 @@ class InventorySerializer(serializers.ModelSerializer):
 
         try:
             ingredient = Ingredient.objects.get(
-                (Q(pk=pk) | Q(name=name))
+                (Q(pk=pk) | Q(name__iexact=name))
             )
         except Ingredient.DoesNotExist:
             raise serializers.ValidationError({
