@@ -1,8 +1,9 @@
 from django.db.models import Q
 from rest_framework import serializers
+from rest_framework.exceptions import PermissionDenied
 
 from ...models import User
-from apps.ingredients.models import Ingredient
+from apps.ingredients.models import Ingredient, IngredientState
 from apps.ingredients.api.serializers import IngredientSerializer
 
 
@@ -28,14 +29,6 @@ class InventorySerializer(serializers.ModelSerializer):
                 'detail': 'Ingredient id or name provided does not match any results in the database.'
             })
 
-        if pk is not None:
-            try:
-                pk = int(pk)
-            except:
-                raise serializers.ValidationError({
-                    'detail': 'Id should be an integer'
-                })
-
         try:
             ingredient = Ingredient.objects.get(
                 (Q(pk=pk) | Q(name=name))
@@ -45,6 +38,15 @@ class InventorySerializer(serializers.ModelSerializer):
                 'detail': 'Ingredient id or name provided does not match any results in the database.'
             })
         else:
-            user.inventory.add(ingredient)
+            if (not ingredient.public or ingredient.state == IngredientState.PENDING) and ingredient.added_by.id != user.id:
+                raise PermissionDenied({
+                    'detail': 'You are not permitted to add this ingredient to your inventory.'
+                })
+            if not user.inventory.filter(pk=ingredient.id).exists():
+                user.inventory.add(ingredient)
+            else:
+                raise serializers.ValidationError({
+                    'detail': 'User does already owns the ingredient provided in their inventory.'
+                })
 
         return user
