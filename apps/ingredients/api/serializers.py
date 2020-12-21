@@ -96,7 +96,9 @@ class IngredientSerializer(serializers.ModelSerializer):
         return ingredient.get_state_display()
 
     def get_author(self, ingredient):
-        return {
-            'id': ingredient.added_by.id,
-            'username': ingredient.added_by.username
-        }
+        if ingredient.added_by is not None:
+            return {
+                'id': ingredient.added_by.id,
+                'username': ingredient.added_by.username
+            }
+        return None
