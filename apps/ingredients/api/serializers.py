@@ -45,7 +45,8 @@ class IngredientSerializer(serializers.ModelSerializer):
         exclude = ('cocktaildb_id',)
         read_only_fields = ('added_by',)
         extra_kwargs = {
-            'public': {'required': True}
+            'public': {'required': True},
+            'alcoholic': {'required': True}
         }
 
     def save(self):
