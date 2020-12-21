@@ -33,7 +33,7 @@ class IngredientSerializer(serializers.ModelSerializer):
     '''
     Serialize data between JSON and Python readable dictionary format
     '''
-    state = StateSerializerField()
+    state = StateSerializerField(required=False)
     added_by = serializers.SerializerMethodField('get_author')
 
     class Meta:
