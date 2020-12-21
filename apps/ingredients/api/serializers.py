@@ -92,9 +92,6 @@ class IngredientSerializer(serializers.ModelSerializer):
 
         return super().update(ingredient, validated_data)
 
-    def get_state(self, ingredient):
-        return ingredient.get_state_display()
-
     def get_author(self, ingredient):
         if ingredient.added_by is not None:
             return {
