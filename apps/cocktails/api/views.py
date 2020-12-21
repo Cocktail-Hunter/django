@@ -149,3 +149,30 @@ class CocktailsAddAPIView(CreateAPIView):
         if self.request.version == 'v1':
             return CocktailSerializer
         return CocktailSerializer
+
+    def perform_create(self, serializer):
+        ingredients = self.request.data.get('ingredients')
+
+        if ingredients is None:
+            raise ValidationError({
+                'ingredients': ['This field is required']
+            })
+
+        if not isinstance(ingredients, list):
+            raise ValidationError({
+                'ingredients': ['Must be an array of integer.']
+            })
+
+        if not all(isinstance(ingredient, int) for ingredient in ingredients):
+            raise ValidationError({
+                'ingredients': ['Must be an array of integer.']
+            })
+
+        ingredients_required = Ingredient.objects.filter(pk__in=ingredients)
+
+        cocktail = serializer.save()
+
+        for ingredient in ingredients:
+            cocktail.ingredients.add(ingredient)
+
+        return cocktail
