@@ -74,8 +74,8 @@ class IngredientSerializer(serializers.ModelSerializer):
         if not validated_data.get('public'):
             validated_data['state'] = IngredientState.APPROVED
 
-        # Automatically approve ingredients from admins
-        if user.is_admin:
+        # Automatically approve ingredients from admins if state is not provided
+        if user.is_admin and validated_data.get('state') is None:
             validated_data['state'] = IngredientState.APPROVED
 
         return super().create(validated_data)
