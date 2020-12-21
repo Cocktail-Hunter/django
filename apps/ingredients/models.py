@@ -16,6 +16,7 @@ class Ingredient(models.Model):
         default=IngredientState.PENDING, choices=IngredientState.choices
     )
     public = models.BooleanField(default=True)
+    alocholic = models.BooleanField(default=True)
     added_by = models.ForeignKey(
         get_user_model(), null=True, blank=True, on_delete=models.CASCADE
     )
