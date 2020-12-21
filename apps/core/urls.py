@@ -5,5 +5,6 @@ app_name = 'core'
 
 urlpatterns = [
     path('', include('apps.accounts.urls', namespace='auth')),
-    path('ingredients/', include('apps.ingredients.urls', namespace='ingredients'))
+    path('ingredients/', include('apps.ingredients.urls', namespace='ingredients')),
+    path('cocktails/', include('apps.cocktails.urls', namespace='cocktails'))
 ]
