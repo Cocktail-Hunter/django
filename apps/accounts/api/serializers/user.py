@@ -46,7 +46,7 @@ class InventorySerializer(serializers.ModelSerializer):
                 user.inventory.add(ingredient)
             else:
                 raise serializers.ValidationError({
-                    'detail': 'User does already owns the ingredient provided in their inventory.'
+                    'detail': 'User already owns the ingredient provided in their inventory.'
                 })
 
         return user
