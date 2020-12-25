@@ -1,12 +1,12 @@
 from django.db.models import Q
-from rest_framework.generics import RetrieveUpdateDestroyAPIView
+from rest_framework.generics import RetrieveUpdateDestroyAPIView, RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework import status
 
 from ...models import User
-from ..serializers.user import InventorySerializer
+from ..serializers.user import InventorySerializer, UserSerializer
 from apps.ingredients.models import Ingredient
 
 
@@ -59,3 +59,16 @@ class InventoryAPIView(RetrieveUpdateDestroyAPIView):
 
         serializer = InventorySerializer(user).data
         return Response(serializer, status=status.HTTP_202_ACCEPTED)
+
+
+class UserRetrieveAPIView(RetrieveAPIView):
+    permission_classes = (IsAuthenticated,)
+    queryset = User.objects.all()
+
+    def get_serializer_class(self):
+        if self.request.version == 'v1':
+            return UserSerializer
+        return UserSerializer
+
+    def get_object(self):
+        return self.request.user
