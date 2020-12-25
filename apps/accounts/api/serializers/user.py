@@ -50,3 +50,13 @@ class InventorySerializer(serializers.ModelSerializer):
                 })
 
         return user
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        '''
+        Meta data for the serializer
+        e.g. what model/table is this serializer for?
+        '''
+        model = User
+        exclude = ('password', 'inventory')
