@@ -151,6 +151,7 @@ class CocktailsAddAPIView(CreateAPIView):
         return CocktailSerializer
 
     def perform_create(self, serializer):
+        public = self.request.data.get('public')
         ingredients = self.request.data.get('ingredients')
 
         if ingredients is None:
@@ -167,12 +168,19 @@ class CocktailsAddAPIView(CreateAPIView):
             raise ValidationError({
                 'ingredients': ['Must be an array of integer.']
             })
-
-        ingredients_required = Ingredient.objects.filter(pk__in=ingredients)
-
         cocktail = serializer.save()
 
-        for ingredient in ingredients:
+        for ingredient_id in ingredients:
+            try:
+                ingredient = Ingredient.objects.get(pk=ingredient_id)
+            except Ingredient.DoesNotExist:
+                raise ValidationError({
+                    'detail': f'Ingredient of ID \'{ingredient_id}\' does not exist.'
+                })
+
+            if public and not ingredient.public:
+                ingredient.public = True
+                ingredient.state = IngredientState.PENDING
             cocktail.ingredients.add(ingredient)
 
         return cocktail
