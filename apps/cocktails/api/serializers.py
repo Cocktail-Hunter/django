@@ -95,7 +95,12 @@ class CocktailSerializer(serializers.ModelSerializer):
             if validated_data.get('public'):
                 validated_data['state'] = CocktailState.PENDING
             else:
-                validated_data['state'] = CocktailState.APPROVED
+                if cocktail.public and cocktail.state == CocktailState.APPROVED:
+                    raise serializers.ValidationError({
+                        'detail': 'Public cocktails cannot be reverted back to private once approved.'
+                    })
+                else:
+                    validated_data['state'] = CocktailState.APPROVED
 
         return super().update(cocktail, validated_data)
 

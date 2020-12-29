@@ -93,7 +93,12 @@ class IngredientSerializer(serializers.ModelSerializer):
             if validated_data.get('public'):
                 validated_data['state'] = IngredientState.PENDING
             else:
-                validated_data['state'] = IngredientState.APPROVED
+                if ingredient.public and ingredient.state == IngredientState.APPROVED:
+                    raise serializers.ValidationError({
+                        'detail': 'Public ingredients cannot be reverted back to private once approved.'
+                    })
+                else:
+                    validated_data['state'] = IngredientState.APPROVED
 
         return super().update(ingredient, validated_data)
 
