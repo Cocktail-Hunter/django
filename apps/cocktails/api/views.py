@@ -1,6 +1,6 @@
 import json
 from django.db.models import Q, Count
-from rest_framework.generics import ListAPIView, CreateAPIView
+from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveUpdateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import ValidationError
 
@@ -176,3 +176,13 @@ class CocktailsAddAPIView(CreateAPIView):
             cocktail.ingredients.add(ingredient)
 
         return cocktail
+
+
+class CocktailDetailUpdateAPIView(RetrieveUpdateAPIView):
+    permission_classes = (IsAuthenticated,)
+    queryset = Cocktail.objects.all()
+
+    def get_serializer_class(self):
+        if self.request.version == 'v1':
+            return CocktailSerializer
+        return CocktailSerializer
