@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from ..models import Cocktail, CocktailState
+from apps.ingredients.models import Ingredient, IngredientState
 
 
 class StateSerializerField(serializers.Field):
@@ -101,6 +102,13 @@ class CocktailSerializer(serializers.ModelSerializer):
                     })
                 else:
                     validated_data['state'] = CocktailState.APPROVED
+
+        state = validated_data.get('state')
+        if state is not None and state == CocktailState.APPROVED:
+            for ingredient in cocktail.ingredients.all():
+                if ingredient.state != IngredientState.APPROVED:
+                    ingredient.state = IngredientState.APPROVED
+                ingredient.save()
 
         return super().update(cocktail, validated_data)
 
