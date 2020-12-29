@@ -1,5 +1,5 @@
 from django.db.models import Q
-from rest_framework.generics import RetrieveUpdateDestroyAPIView, RetrieveAPIView, UpdateAPIView
+from rest_framework.generics import RetrieveUpdateDestroyAPIView, RetrieveUpdateAPIView, UpdateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
@@ -7,6 +7,7 @@ from rest_framework import status
 
 from ...models import User
 from ..serializers.user import InventorySerializer, UserSerializer, ChangePasswordSerializer
+from apps.core.parsers import MultipartJsonParser
 from apps.ingredients.models import Ingredient
 
 
@@ -61,9 +62,10 @@ class InventoryAPIView(RetrieveUpdateDestroyAPIView):
         return Response(serializer, status=status.HTTP_202_ACCEPTED)
 
 
-class UserRetrieveAPIView(RetrieveAPIView):
+class UserRetrieveAPIView(RetrieveUpdateAPIView):
     permission_classes = (IsAuthenticated,)
     queryset = User.objects.all()
+    parser_classes = (MultipartJsonParser,)
 
     def get_serializer_class(self):
         if self.request.version == 'v1':
