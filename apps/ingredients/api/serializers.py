@@ -83,6 +83,11 @@ class IngredientSerializer(serializers.ModelSerializer):
 
     def update(self, ingredient, validated_data):
 
+        if self.context.get('request').user != ingredient.added_by:
+            raise serializers.ValidationError({
+                'detail': 'You do not own this ingredient and therefore not allowed to modify it.'
+            })
+
         if 'public' in validated_data:
             # Set the ingredient to the appropriate state
             if validated_data.get('public'):
