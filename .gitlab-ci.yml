@@ -4,10 +4,9 @@ stages:
 
 test:
   stage: test
+  image: python:3.8
   script:
     - export DATABASE_URL=postgres://postgres:@postgres:5432/python-test-app
-    - apt-get update -qy
-    - apt-get install -y python3-dev python3-pip
     - pip install pipenv
     - pipenv install
     - pipenv run python manage.py test
