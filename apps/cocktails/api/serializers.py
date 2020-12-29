@@ -86,7 +86,8 @@ class CocktailSerializer(serializers.ModelSerializer):
 
     def update(self, cocktail, validated_data):
 
-        if self.context.get('request').user != cocktail.author:
+        user = self.context.get('request').user
+        if user != cocktail.author and not user.is_admin:
             raise serializers.ValidationError({
                 'detail': 'You do not own this cocktail and therefore not allowed to modify it.'
             })
