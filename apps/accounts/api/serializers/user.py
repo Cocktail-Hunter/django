@@ -60,3 +60,16 @@ class UserSerializer(serializers.ModelSerializer):
         '''
         model = User
         exclude = ('password', 'inventory')
+
+
+class ChangePasswordSerializer(serializers.Serializer):
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
+
+    class Meta:
+        '''
+        Meta data for the serializer
+        e.g. what model/table is this serializer for?
+        '''
+        model = User
+        exclude = ('password', 'inventory')
