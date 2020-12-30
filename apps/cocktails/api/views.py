@@ -50,7 +50,7 @@ class CocktailAPIView(ListAPIView):
         else:
             if not user.is_admin:
                 queryset = queryset.exclude(
-                    ~Q(added_by__id=user.id) &
+                    ~Q(author__id=user.id) &
                     (~Q(state=CocktailState.APPROVED) | Q(state=False))
                 )
 
