@@ -18,6 +18,7 @@ psycopg2 = "*"
 pillow = "*"
 djangorestframework-simplejwt = "*"
 djangorestframework-camel-case = "*"
+django-cors-headers = "*"
 markdown = "*"
 
 [requires]
