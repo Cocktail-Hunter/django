@@ -1,7 +1,8 @@
 from rest_framework.generics import CreateAPIView
+from rest_framework_simplejwt.views import TokenRefreshView
 
 from ...models import User
-from ..serializers.auth import RegistrationSerializer
+from ..serializers.auth import RegistrationSerializer, CustomTokenRefreshSerializer
 
 
 class RegistrationAPIView(CreateAPIView):
@@ -16,3 +17,10 @@ class RegistrationAPIView(CreateAPIView):
         if self.request.version == 'v1':
             return RegistrationSerializer
         return RegistrationSerializer
+
+
+class CustomTokenRefreshView(TokenRefreshView):
+    '''
+    Refresh token generator view.
+    '''
+    serializer_class = CustomTokenRefreshSerializer

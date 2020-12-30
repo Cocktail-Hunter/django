@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from ..models import Cocktail, CocktailState
+from apps.ingredients.models import Ingredient, IngredientState
 
 
 class StateSerializerField(serializers.Field):
@@ -85,7 +86,8 @@ class CocktailSerializer(serializers.ModelSerializer):
 
     def update(self, cocktail, validated_data):
 
-        if self.context.get('request').user != cocktail.author:
+        user = self.context.get('request').user
+        if user != cocktail.author and not user.is_admin:
             raise serializers.ValidationError({
                 'detail': 'You do not own this cocktail and therefore not allowed to modify it.'
             })
@@ -101,6 +103,13 @@ class CocktailSerializer(serializers.ModelSerializer):
                     })
                 else:
                     validated_data['state'] = CocktailState.APPROVED
+
+        state = validated_data.get('state')
+        if state is not None and state == CocktailState.APPROVED:
+            for ingredient in cocktail.ingredients.all():
+                if ingredient.state != IngredientState.APPROVED:
+                    ingredient.state = IngredientState.APPROVED
+                ingredient.save()
 
         return super().update(cocktail, validated_data)
 

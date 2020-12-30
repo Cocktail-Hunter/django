@@ -1,6 +1,9 @@
 from rest_framework import serializers
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework import exceptions
+from rest_framework_simplejwt.state import token_backend
+from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 
 from ...models import User
 
@@ -41,3 +44,29 @@ class RegistrationSerializer(serializers.ModelSerializer):
         user.set_password(validated_data.get('password'))
         user.save()
         return user
+
+
+class CustomTokenRefreshSerializer(TokenRefreshSerializer):
+    '''
+    Inherit from `TokenRefreshSerializer` and touch the database
+    before re-issuing a new access token and ensure that the user
+    exists and is active.
+    '''
+
+    error_msg = 'No active account found with the given credentials'
+
+    def validate(self, attrs):
+        token_payload = token_backend.decode(attrs.get('refresh'))
+        try:
+            user = User.objects.get(pk=token_payload.get('user_id'))
+        except User.DoesNotExist:
+            raise exceptions.AuthenticationFailed(
+                self.error_msg, 'no_active_account'
+            )
+
+        if not user.is_active:
+            raise exceptions.AuthenticationFailed(
+                self.error_msg, 'no_active_account'
+            )
+
+        return super().validate(attrs)

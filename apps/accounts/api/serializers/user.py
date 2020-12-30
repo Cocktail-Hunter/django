@@ -60,3 +60,23 @@ class UserSerializer(serializers.ModelSerializer):
         '''
         model = User
         exclude = ('password', 'inventory')
+        extra_kwargs = {
+            'last_login': {'read_only': True},
+            'is_active': {'read_only': True},
+            'is_verified': {'read_only': True},
+            'created_at': {'read_only': True},
+            'slug': {'read_only': True}
+        }
+
+
+class ChangePasswordSerializer(serializers.Serializer):
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
+
+    class Meta:
+        '''
+        Meta data for the serializer
+        e.g. what model/table is this serializer for?
+        '''
+        model = User
+        exclude = ('password', 'inventory')

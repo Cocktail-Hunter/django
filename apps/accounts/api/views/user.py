@@ -1,12 +1,13 @@
 from django.db.models import Q
-from rest_framework.generics import RetrieveUpdateDestroyAPIView, RetrieveAPIView
+from rest_framework.generics import RetrieveUpdateDestroyAPIView, RetrieveUpdateAPIView, UpdateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework import status
 
 from ...models import User
-from ..serializers.user import InventorySerializer, UserSerializer
+from ..serializers.user import InventorySerializer, UserSerializer, ChangePasswordSerializer
+from apps.core.parsers import MultipartJsonParser
 from apps.ingredients.models import Ingredient
 
 
@@ -61,9 +62,10 @@ class InventoryAPIView(RetrieveUpdateDestroyAPIView):
         return Response(serializer, status=status.HTTP_202_ACCEPTED)
 
 
-class UserRetrieveAPIView(RetrieveAPIView):
+class UserRetrieveAPIView(RetrieveUpdateAPIView):
     permission_classes = (IsAuthenticated,)
     queryset = User.objects.all()
+    parser_classes = (MultipartJsonParser,)
 
     def get_serializer_class(self):
         if self.request.version == 'v1':
@@ -72,3 +74,36 @@ class UserRetrieveAPIView(RetrieveAPIView):
 
     def get_object(self):
         return self.request.user
+
+
+class UserPasswordUpdateAPIView(UpdateAPIView):
+    permission_classes = (IsAuthenticated,)
+    queryset = User.objects.all()
+
+    def get_serializer_class(self):
+        if self.request.version == 'v1':
+            return ChangePasswordSerializer
+        return ChangePasswordSerializer
+
+    def get_object(self):
+        return self.request.user
+
+    def update(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        serializer = self.get_serializer(data=request.data)
+
+        if serializer.is_valid():
+            # Check old password
+            if not self.object.check_password(serializer.data.get('old_password')):
+                return Response({'old_password': ['Wrong password.']}, status=status.HTTP_400_BAD_REQUEST)
+
+            self.object.set_password(serializer.data.get('new_password'))
+            self.object.save()
+            response = {
+                'status': 'success',
+                'message': 'Password updated successfully.'
+            }
+
+            return Response(response)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
