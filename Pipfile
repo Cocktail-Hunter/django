@@ -19,6 +19,7 @@ pillow = "*"
 djangorestframework-simplejwt = "*"
 djangorestframework-camel-case = "*"
 markdown = "*"
+django-cors-headers = "*"
 
 [requires]
 python_version = "3.8"
