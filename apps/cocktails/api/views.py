@@ -117,18 +117,22 @@ class CocktailAPIView(ListAPIView):
                 'ingredients': ['Must be an array of integer.']
             })
 
-        ingredients_required = Ingredient.objects.filter(
-            pk__in=ingredients
+        queryset = queryset.annotate(
+            num_ingredients=Count('ingredients')
+        ).filter(
+            num_ingredients__gte=len(ingredients),
+            alcoholic=alcohol
         )
 
-        queryset = queryset.exclude(
-            ~Q(alcoholic=alcohol) |
-            ~Q(ingredients__in=ingredients_required)
-        ).annotate(
-            num_ingredients=Count('ingredients')
-        ).exclude(
-            Q(num_ingredients__gt=flexibility)
-        )
+        for ingredient_id in ingredients:
+            queryset = queryset.filter(ingredients__pk=ingredient_id)
+
+        if flexibility > 0:
+            queryset = queryset.filter(
+                num_ingredients__lte=len(ingredients) + flexibility
+            )
+        else:
+            queryset = queryset.filter(num_ingredients=len(ingredients))
 
         return queryset
 
