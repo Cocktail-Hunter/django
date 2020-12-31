@@ -78,13 +78,10 @@ class CocktailAPIView(ListAPIView):
         flexibility = data.get('flexibility')
         alcohol = data.get('alcohol')
 
-        if alcohol is None:
-            raise ValidationError({
-                'alcohol': ['This field is required.']
-            })
-        else:
-            if not isinstance(alcohol, int):
+        if not isinstance(alcohol, int) and alcohol is not None:
+            try:
                 alcohol = json.loads(alcohol)
+            except:
                 raise ValidationError({
                     'alcohol': ['Must be a boolean.']
                 })
@@ -120,9 +117,11 @@ class CocktailAPIView(ListAPIView):
         queryset = queryset.annotate(
             num_ingredients=Count('ingredients')
         ).filter(
-            num_ingredients__gte=len(ingredients),
-            alcoholic=alcohol
+            num_ingredients__gte=len(ingredients)
         )
+
+        if alcohol is not None:
+            queryset.filter(alcoholic=alcohol)
 
         for ingredient_id in ingredients:
             queryset = queryset.filter(ingredients__pk=ingredient_id)
