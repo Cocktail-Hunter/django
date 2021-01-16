@@ -114,26 +114,30 @@ class CocktailAPIView(ListAPIView):
                 'ingredients': ['Must be an array of integer.']
             })
 
-        queryset = queryset.annotate(
-            num_ingredients=Count('ingredients')
-        ).filter(
-            num_ingredients__gte=len(ingredients)
-        )
-
         if alcohol is not None:
             queryset.filter(alcoholic=alcohol)
 
-        for ingredient_id in ingredients:
-            queryset = queryset.filter(ingredients__pk=ingredient_id)
+        queryset = queryset.filter(
+            ingredients__pk__in=ingredients
+        ).annotate(
+            num_ingredients=Count('ingredients')
+        ).filter(
+            num_ingredients__lte=len(ingredients) + flexibility
+        )
 
-        if flexibility > 0:
-            queryset = queryset.filter(
-                num_ingredients__lte=len(ingredients) + flexibility
-            )
-        else:
-            queryset = queryset.filter(num_ingredients=len(ingredients))
+        matches = Cocktail.objects.none()
+        for cocktail in queryset:
+            not_match_count = 0
 
-        return queryset
+            for ingredient in cocktail.ingredients.all():
+                if ingredient.pk not in ingredients:
+                    not_match_count += 1
+
+            if not_match_count <= flexibility:
+                if not matches.filter(id=cocktail.pk).exists():
+                    matches |= queryset.filter(id=cocktail.pk)
+
+        return matches.distinct()
 
     def post(self, request, *args, **kwargs):
         return super().get(request, args, kwargs)
