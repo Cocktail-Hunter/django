@@ -115,7 +115,7 @@ class CocktailAPIView(ListAPIView):
             })
 
         if alcohol is not None:
-            queryset.filter(alcoholic=alcohol)
+            queryset = queryset.filter(alcoholic=alcohol)
 
         queryset = queryset.filter(
             ingredients__pk__in=ingredients
