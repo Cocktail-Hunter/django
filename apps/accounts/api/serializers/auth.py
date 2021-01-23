@@ -1,9 +1,10 @@
-from rest_framework import serializers
 from rest_framework import status
-from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import exceptions
+from rest_framework import serializers
+from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.state import token_backend
 from rest_framework_simplejwt.serializers import TokenRefreshSerializer
+from rest_framework_simplejwt.exceptions import TokenBackendError, TokenError
 
 from ...models import User
 
@@ -56,9 +57,17 @@ class CustomTokenRefreshSerializer(TokenRefreshSerializer):
     error_msg = 'No active account found with the given credentials'
 
     def validate(self, attrs):
-        token_payload = token_backend.decode(attrs.get('refresh'))
+        token_payload = attrs.get('refresh')
+
+        if token_payload is not None:
+            # Decode token
+            try:
+                token = token_backend.decode(token_payload)
+            except TokenBackendError:
+                raise TokenError('Token is invalid or expired')
+
         try:
-            user = User.objects.get(pk=token_payload.get('user_id'))
+            user = User.objects.get(pk=token.get('user_id'))
         except User.DoesNotExist:
             raise exceptions.AuthenticationFailed(
                 self.error_msg, 'no_active_account'
